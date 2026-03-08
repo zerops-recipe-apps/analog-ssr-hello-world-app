@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Analog/Nitro build output
+.output/
+dist/
+
+# Vite cache
+.vite/
+
+# Angular compiler cache
+.angular/
+
+# Bundled migration artifact (generated during build)
+migrate.cjs
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Editor
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
