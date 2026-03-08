@@ -14,8 +14,11 @@ zerops:
         # migration script is self-contained (no NODE_PATH required).
         - node scripts/bundle-migrate.mjs
         # Vite/Analog build: compiles Angular client bundle and runs
-        # Nitro to produce .output/ — a self-contained server artifact.
+        # Nitro to produce the server artifact.
         - npm run build
+        # Diagnostic: show what directories and entry points were created
+        - ls -la
+        - find . -maxdepth 4 -name 'index.mjs' -not -path '*/node_modules/*' 2>/dev/null || true
 
       deployFiles:
         # Nitro bundles all server dependencies into .output/ —
