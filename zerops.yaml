@@ -14,17 +14,15 @@ zerops:
         # migration script is self-contained (no NODE_PATH required).
         - node scripts/bundle-migrate.mjs
         # Vite/Analog build: compiles Angular client bundle and runs
-        # Nitro to produce the server artifact.
+        # Nitro to produce dist/analog/ — a self-contained server
+        # artifact. No node_modules needed at runtime.
         - npm run build
-        # Diagnostic: show what directories and entry points were created
-        - ls -la
-        - find . -maxdepth 4 -name 'index.mjs' -not -path '*/node_modules/*' 2>/dev/null || true
 
       deployFiles:
-        # Nitro bundles all server dependencies into .output/ —
-        # no node_modules needed at runtime. Only the migration
-        # script (with pg bundled inside) is listed separately.
-        - .output
+        # Analog's Nitro preset bundles all server dependencies into
+        # dist/analog/ — no node_modules needed at runtime. Only the
+        # migration script (with pg bundled inside) is listed separately.
+        - dist/analog
         - migrate.cjs
 
       cache:
@@ -64,7 +62,7 @@ zerops:
         DB_USER: ${db_user}
         DB_PASS: ${db_password}
 
-      start: node .output/server/index.mjs
+      start: node dist/analog/server/index.mjs
 
   - setup: dev
     build:
