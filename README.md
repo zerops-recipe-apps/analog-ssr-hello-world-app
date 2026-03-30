@@ -1,8 +1,8 @@
 # Analog SSR Hello World Recipe App
 
-<!--#ZEROPS_EXTRACT_START:intro#-->
+<!-- #ZEROPS_EXTRACT_START:intro# -->
 A server-side rendered [Analog](https://analogjs.org) application — Angular's meta-framework powered by Vite and Nitro — connected to a PostgreSQL database on [Zerops](https://zerops.io). Demonstrates idempotent database migrations and a health check endpoint that queries live data from the database.
-<!--#ZEROPS_EXTRACT_END:intro#-->
+<!-- #ZEROPS_EXTRACT_END:intro# -->
 Used within [Analog SSR Hello World recipe](https://app.zerops.io/recipes/analog-ssr-hello-world) for [Zerops](https://zerops.io) platform.
 
 ⬇️ **Full recipe page and deploy with one-click**
@@ -13,7 +13,7 @@ Used within [Analog SSR Hello World recipe](https://app.zerops.io/recipes/analog
 
 ## Integration Guide
 
-<!--#ZEROPS_EXTRACT_START:integration-guide#-->
+<!-- #ZEROPS_EXTRACT_START:integration-guide# -->
 
 ### 1. Adding `zerops.yaml`
 
@@ -131,4 +131,4 @@ zerops:
       start: zsc noop --silent
 ```
 
-<!--#ZEROPS_EXTRACT_END:integration-guide#-->
+<!-- #ZEROPS_EXTRACT_END:integration-guide# -->
