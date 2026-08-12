@@ -26,3 +26,20 @@ migrate.cjs
 # OS
 .DS_Store
 Thumbs.db
+
+.npm-cache/
+
+*.tsbuildinfo
+
+.turbo/
+
+npm-debug.log*
+
+coverage/
+
+.vercel/
+
+.vscode/*
+!.vscode/extensions.json
+
+*.pem
