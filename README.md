@@ -26,7 +26,7 @@ The main application configuration file you place at the root of your repository
 zerops:
   - setup: prod
     build:
-      base: nodejs@22
+      base: nodejs@24
 
       buildCommands:
         # npm ci installs exact versions from package-lock.json —
@@ -59,7 +59,7 @@ zerops:
           path: /
 
     run:
-      base: nodejs@22
+      base: nodejs@24
 
       # Migration runs once per deploy version across all containers.
       # initCommands — not buildCommands — so schema and code change
@@ -88,7 +88,7 @@ zerops:
 
   - setup: dev
     build:
-      base: nodejs@22
+      base: nodejs@24
       # Ubuntu gives a richer toolset (git, editors, debuggers)
       # for interactive development via SSH.
       os: ubuntu
@@ -106,7 +106,7 @@ zerops:
         - node_modules
 
     run:
-      base: nodejs@22
+      base: nodejs@24
       os: ubuntu
 
       # Migration still runs in dev so the database is ready
