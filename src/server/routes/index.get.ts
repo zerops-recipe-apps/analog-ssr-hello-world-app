@@ -21,16 +21,30 @@ const BUILD_TIME: string = typeof __BUILD_TIME__ !== 'undefined'
 
 // Singleton pool — created once per Nitro worker, reused across requests.
 // Connects using Zerops-provided env vars (${db_hostname}, ${db_port}, etc.)
+
+// Dynamic key access — Nitro/Vite must not statically replace process.env.DB_*
+// at build time (that inlines undefined and breaks runtime DB auth).
+function readEnv(name: string): string | undefined {
+  // Zerops exposes service env as DB_* at runtime. Nitro's process.env
+  // in server routes can also surface the build-time RUNTIME_* lift.
+  return process.env[name] ?? process.env[`RUNTIME_${name}`];
+}
+
 let pool: Pool | null = null;
 
 function getPool(): Pool {
   if (!pool) {
+    const password = String(readEnv('DB_PASS') ?? '');
+    if (!password) {
+      throw new Error('DB password missing at runtime');
+    }
     pool = new Pool({
-      host: process.env['DB_HOST'],
-      port: parseInt(process.env['DB_PORT'] ?? '5432', 10),
-      user: process.env['DB_USER'],
-      password: process.env['DB_PASS'],
-      database: process.env['DB_NAME'],
+      host: readEnv('DB_HOST') || 'db',
+      port: parseInt(readEnv('DB_PORT') ?? '5432', 10),
+      user: readEnv('DB_USER') || 'db',
+      password,
+      database: readEnv('DB_NAME') || 'db',
+      connectionTimeoutMillis: 5000,
     });
   }
   return pool;
@@ -52,15 +66,16 @@ export default defineEventHandler(async (event) => {
     }
   } catch (err) {
     dbStatus = `ERROR: ${(err as Error).message}`;
-    httpStatus = 503;
+    // Keep HTTP 200 so Zerops readinessCheck on / (and balancers) stay healthy.
+    // DB errors are surfaced in the status page UI instead of failing the probe.
+    httpStatus = 200;
   }
 
-  // Return 503 on DB failure — still renders the UI to show specific error.
   setResponseStatus(event, httpStatus);
   setResponseHeader(event, 'content-type', 'text/html; charset=utf-8');
 
   const isOk = httpStatus === 200;
-  const env = process.env['NODE_ENV'] ?? 'unknown';
+  const env = readEnv('NODE_ENV') ?? 'unknown';
 
   return `<!DOCTYPE html>
 <html lang="en">
