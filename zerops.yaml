@@ -28,13 +28,13 @@ zerops:
       cache:
         - node_modules
 
-    # Readiness check: Zerops verifies each new container passes
-    # before the project balancer routes traffic to it.
+    # Readiness on /healthz (no DB) — / is the status page and may
+    # still be slow or 503 when the pool is cold; do not probe /.
     deploy:
       readinessCheck:
         httpGet:
           port: 3000
-          path: /
+          path: /healthz
 
     run:
       base: nodejs@24
@@ -53,6 +53,9 @@ zerops:
 
       envVariables:
         NODE_ENV: production
+        # Nitro defaults to [::]; Zerops balancer needs IPv4 bind.
+        HOST: "0.0.0.0"
+        NITRO_HOST: "0.0.0.0"
         # DB_NAME matches the hostname of the db service below.
         DB_NAME: db
         # Referencing pattern: ${hostname_key} resolves at runtime
