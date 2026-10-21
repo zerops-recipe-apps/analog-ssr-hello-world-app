@@ -2,6 +2,8 @@
 
 import { defineConfig } from 'vite';
 import analog from '@analogjs/platform';
+import angular from '@analogjs/vite-plugin-angular';
+import nitro from '@analogjs/vite-plugin-nitro';
 import { readFileSync } from 'node:fs';
 
 // Read version at build time — node_modules must be installed first (npm ci)
@@ -14,22 +16,20 @@ const BUILD_TIME = JSON.stringify(new Date().toISOString());
 
 export default defineConfig(({ mode }) => ({
   plugins: [
+    // Analog 3 no longer composes Angular or Nitro. analog() keeps SSR
+    // options; nitro() writes dist/analog/server, which zerops.yaml starts.
     analog({
-      nitro: {
-        // node-server preset produces .output/server/index.mjs —
-        // a self-contained Nitro bundle with all dependencies.
-        preset: 'node-server',
-
-        // replace: applied by Nitro's Rollup build to server routes in
-        // both dev (Nitro dev server) and prod (bundled .output/).
-        // Use this for server-side constants — top-level 'define' below
-        // covers the Angular client bundle.
-        replace: {
-          __ANALOG_VERSION__: ANALOG_VERSION,
-          __BUILD_TIME__: BUILD_TIME,
-        },
-      },
       ssr: true,
+    }),
+    angular(),
+    nitro({
+      preset: 'node-server',
+      // Applied by Nitro's Rollup build to server routes in dev and prod.
+      // Top-level define below covers the Angular client bundle.
+      replace: {
+        __ANALOG_VERSION__: ANALOG_VERSION,
+        __BUILD_TIME__: BUILD_TIME,
+      },
     }),
   ],
 
